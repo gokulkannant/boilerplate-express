@@ -4,6 +4,19 @@ require('dotenv').config()
 let bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
+
+
+app.post("/api/fileanalyse", upload.single("upfile"), (req, res) => {
+    const file = req.file;
+
+    res.json({
+        name: file.originalname,
+        type: file.mimetype,
+        size: file.size
+    });
+});
 
 //middleware to log requests
 app.use(function (req, res, next) {
@@ -286,4 +299,3 @@ module.exports = app;
 
 
 
-module.exports = app;
