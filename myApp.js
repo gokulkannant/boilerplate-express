@@ -28,6 +28,13 @@ app.get("/:word/echo", function (req, res) {
 });
 
 
+app.get("/name", function (req, res) {
+    const first = req.query.first;
+    const last = req.query.last;
+
+    res.json({ name: first + " " + last });
+});
+
 app.get('/now', function (req, res, next) {
     req.time = new Date().toString();
     next();
