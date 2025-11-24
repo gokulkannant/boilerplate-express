@@ -9,6 +9,39 @@ app.use(function (req, res, next) {
     next();
 });
 
+app.get("/api/:date?", function (req, res) {
+    let dateString = req.params.date;
+
+
+    if (!dateString) {
+        let now = new Date();
+        return res.json({
+            unix: now.getTime(),
+            utc: now.toUTCString()
+        });
+    }
+
+
+    if (!isNaN(dateString)) {
+        dateString = Number(dateString);
+    }
+
+
+    let date = new Date(dateString);
+
+
+    if (date.toString() === "Invalid Date") {
+        return res.json({ error: "Invalid Date" });
+    }
+
+
+    res.json({
+        unix: date.getTime(),
+        utc: date.toUTCString()
+    });
+});
+
+
 app.get("/", function (req, res) {
     res.sendFile(__dirname + "/views/index.html");
 });
