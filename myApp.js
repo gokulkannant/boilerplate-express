@@ -3,6 +3,7 @@ let app = express();
 require('dotenv').config()
 let bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.use(function (req, res, next) {
     console.log(req.method + " " + req.path + " - " + req.ip);
@@ -17,6 +18,50 @@ app.get("/api/whoami", function (req, res) {
     });
 });
 
+let urlDatabase = [];
+let id = 1;
+
+
+const validUrl = urlString => {
+    try {
+        const urlObj = new URL(urlString);
+        return urlObj.protocol === "http:" || urlObj.protocol === "https:";
+    } catch (e) {
+        return false;
+    }
+};
+
+
+app.post("/api/shorturl", function (req, res) {
+    const originalUrl = req.body.url;
+
+
+    if (!validUrl(originalUrl)) {
+        return res.json({ error: "invalid url" });
+    }
+
+
+    const shortUrl = id++;
+    urlDatabase.push({ original_url: originalUrl, short_url: shortUrl });
+
+    res.json({
+        original_url: originalUrl,
+        short_url: shortUrl
+    });
+});
+
+
+app.get("/api/shorturl/:short_url", function (req, res) {
+    const shortUrl = Number(req.params.short_url);
+
+    const record = urlDatabase.find(obj => obj.short_url === shortUrl);
+
+    if (!record) {
+        return res.json({ error: "No short URL found" });
+    }
+
+    res.redirect(record.original_url);
+});
 
 app.get("/api/:date?", function (req, res) {
     let dateString = req.params.date;
