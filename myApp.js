@@ -37,6 +37,13 @@ app.get("/name", function (req, res) {
     res.json({ name: first + " " + last });
 });
 
+app.post("/name", function (req, res) {
+    const first = req.body.first;
+    const last = req.body.last;
+
+    res.json({ name: first + " " + last });
+});
+
 app.get('/now', function (req, res, next) {
     req.time = new Date().toString();
     next();
